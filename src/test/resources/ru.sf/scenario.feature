@@ -1,7 +1,8 @@
-Feature: Is it Friday yet?
-  Everybody wants to know when it's Friday
-
-  Scenario: Sunday isn't Friday
-    Given today is 'Sunday'
-    When I ask whether it's Friday yet
-    Then I should be told 'Nope'
+Feature: Filling cart
+  Scenario: add item to cart
+    Given open url h&m 'https://www2.hm.com/en_au/index.html'
+    When website is open accept all cookie
+    Then start search 'dress'
+    Then click on first image
+    And choose size
+    Then click add button
