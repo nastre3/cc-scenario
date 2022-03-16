@@ -15,27 +15,37 @@ import static org.junit.Assert.assertEquals;
 public class StepDefinitions { // содержит шаги для тестовых сценариев
 
     private static final WebDriver wd;
+    private static final ChooseCityPage chooseCityPage;
+    private static final CityMenuPage cityMenuPage;
     private static final HomePage homePage;
     static { // конструктор
         System.setProperty("webdriver.chrome.driver", "src/test/resources/chromedriver.exe");
         wd = new ChromeDriver();
         homePage = new HomePage(wd);
+        chooseCityPage = new ChooseCityPage(wd);
+        cityMenuPage = new CityMenuPage(wd);
     }
 
     @Given("open url of dodo pizza {string}")
     public void open_url_of_dodo_pizza(String url) {
-        wd.get(url);
+        chooseCityPage.go(url);
     }
+
     @Then("fill input with {string}")
     public void fill_input_with(String city) {
-        final var searchInput = wd.findElement(By.className("locality-selector-popup__search-input"));
-        searchInput.sendKeys(city, Keys.ENTER); // заполнение города и нажатие Enter
+        chooseCityPage.searchCity(city);
     }
-    @Then("assert that choosen city is {string}")
+
+    @Then("assert that chosen city is {string}")
     public void assert_that_choosen_city_is(String expectedCity) {
         //wd.findElement(By.className("header__about-slogan-text"));
-        String actualCity = wd.findElement(By.className("header__about-slogan-text_link")).getText();
-        assertEquals(expectedCity, actualCity);
+        final var currentActiveCity = cityMenuPage.getCurrentActiveCity();
+        assertEquals(expectedCity, currentActiveCity);
+    }
 
+    @Then("assert that user get message {string}")
+    public void assert_that_user_get_message(String errorMessage) {
+        String actualMessage = chooseCityPage.getCityNotFoundMessage();
+        assertEquals(errorMessage, actualMessage);
     }
 }
